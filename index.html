@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Escala de Operadores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg:#0B111C;
+    --panel:#141C2B;
+    --panel-2:#1B2436;
+    --panel-3:#212B40;
+    --border:#283349;
+    --border-soft:#1E2738;
+    --text:#EAEEF6;
+    --text-muted:#8A96AC;
+    --text-faint:#5C6884;
+    --accent:#F2A93B;
+    --accent-dark:#B87D1E;
+    --accent-soft:rgba(242,169,59,0.14);
+    --blue:#5B9DF2;
+    --green:#48D6A8;
+    --purple:#B084F2;
+    --red:#F0654A;
+    --gray:#5C6884;
+    --radius:14px;
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(242,169,59,0.08), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 34px);
+    color:var(--text);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    justify-content:center;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+  .app-shell{
+    width:100%;
+    max-width:520px;
+    min-height:100vh;
+    background:var(--bg);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    border-left:1px solid var(--border-soft);
+    border-right:1px solid var(--border-soft);
+  }
+
+  /* ---------- HEADER ---------- */
+  .app-header{
+    padding:22px 20px 16px;
+    border-bottom:1px solid var(--border-soft);
+    position:sticky;
+    top:0;
+    background:rgba(11,17,28,0.92);
+    backdrop-filter:blur(10px);
+    z-index:20;
+  }
+  .app-header__top{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .app-mark{
+    width:38px;height:38px;
+    border-radius:10px;
+    background:linear-gradient(155deg, var(--accent), var(--accent-dark));
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    box-shadow:0 4px 14px rgba(242,169,59,0.25);
+  }
+  .app-mark svg{width:20px;height:20px;}
+  .app-titles h1{
+    font-family:var(--font-display);
+    font-size:18px;
+    font-weight:700;
+    margin:0;
+    letter-spacing:0.2px;
+  }
+  .app-titles p{
+    margin:2px 0 0;
+    font-size:12px;
+    color:var(--text-muted);
+    font-family:var(--font-mono);
+    letter-spacing:0.3px;
+  }
+  .header-stat{
+    margin-left:auto;
+    text-align:right;
+  }
+  .header-stat .n{
+    font-family:var(--font-mono);
+    font-size:20px;
+    font-weight:600;
+    color:var(--accent);
+    line-height:1;
+  }
+  .header-stat .l{
+    font-size:10px;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    margin-top:3px;
+  }
+
+  /* ---------- MAIN ---------- */
+  .app-main{
+    flex:1;
+    padding:18px 16px 100px;
+  }
+  .screen{display:none;}
+  .screen.active{display:block; animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .section-label{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin:22px 0 10px;
+  }
+  .section-label:first-child{margin-top:0;}
+  .section-label h2{
+    font-family:var(--font-display);
+    font-size:14px;
+    font-weight:600;
+    letter-spacing:0.4px;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin:0;
+  }
+  .section-label span{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-faint);
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius);
+    padding:16px;
+  }
+
+  /* ---------- ESCALA TOP ---------- */
+  .week-nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--panel);
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius);
+    padding:12px 14px;
+    margin-bottom:12px;
+    gap:10px;
+  }
+  .week-nav .rng{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--text);
+    font-weight:500;
+  }
+  .week-nav .sub{
+    font-size:10px;
+    color:var(--text-faint);
+    margin-top:2px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+  .badge-chip{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 11px;border-radius:20px;
+    background:var(--accent-soft);
+    border:1px solid rgba(242,169,59,0.35);
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    color:var(--accent);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .badge-chip svg{width:13px;height:13px;}
+
+  .escala-toolbar{display:flex; gap:10px; margin-bottom:14px;}
+  .day-picker-row{display:flex; gap:10px; margin-bottom:10px;}
+  .day-picker-select{
+    flex:1;
+    background:var(--panel-3);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:11px 12px;
+    border-radius:9px;
+    font-size:12.5px;
+    font-family:var(--font-mono);
+    font-weight:600;
+    outline:none;
+  }
+  .day-picker-select:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  #btn-random-day{flex:0 0 auto; padding-left:14px; padding-right:14px;}
+  .toolbar-btn{
+    flex:1;
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    background:var(--panel-3);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:11px 8px;
+    border-radius:9px;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:filter 0.12s ease, transform 0.12s ease;
+  }
+  .toolbar-btn svg{width:15px;height:15px; flex-shrink:0;}
+  .toolbar-btn:hover{filter:brightness(1.2);}
+  .toolbar-btn:active{transform:scale(0.98);}
+  .toolbar-btn--accent{background:var(--accent); color:#1A1200; border-color:transparent;}
+  .toolbar-btn:disabled{opacity:0.45; cursor:not-allowed;}
+  .toolbar-hint{
+    font-size:11px;
+    color:var(--text-faint);
+    text-align:center;
+    margin:-4px 0 14px;
+  }
+
+  /* ---------- SHARE CARD / GRID ---------- */
+  .share-card{
+    background:var(--panel);
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius);
+    padding:16px;
+  }
+  .share-header{margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;}
+  .share-header .share-title{font-family:var(--font-display); font-size:15px; font-weight:700;}
+  .share-header .share-sub{font-size:10.5px; color:var(--text-faint); font-family:var(--font-mono); margin-top:2px;}
+  .share-mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(155deg, var(--accent), var(--accent-dark)); flex-shrink:0;}
+
+  .grid-scroll{
+    overflow-x:auto;
+    border-radius:10px;
+    border:1px solid var(--border-soft);
+  }
+
+  .day-roster-header{margin-bottom:12px;}
+  .day-roster-title{font-family:var(--font-display); font-size:16px; font-weight:700;}
+  .day-roster-date{font-size:11px; color:var(--text-faint); font-family:var(--font-mono); margin-top:2px; text-transform:uppercase; letter-spacing:0.4px;}
+  .day-roster-list{display:flex; flex-direction:column; gap:8px;}
+  .day-roster-item{
+    display:flex; align-items:center; gap:12px;
+    width:100%;
+    background:var(--panel-3);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 12px;
+    cursor:pointer;
+    text-align:left;
+    transition:filter 0.12s ease, transform 0.12s ease;
+    font-family:var(--font-body);
+  }
+  .day-roster-item:hover{filter:brightness(1.15);}
+  .day-roster-item:active{transform:scale(0.99);}
+  .day-roster-item.is-disabled{cursor:default; opacity:0.55;}
+  .dr-avatar{
+    width:34px;height:34px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:11.5px;
+    flex-shrink:0;
+  }
+  .dr-body{flex:1; min-width:0; display:flex; flex-direction:column;}
+  .dr-name{font-size:13px; font-weight:600; color:var(--text);}
+  .dr-sub{font-size:11px; color:var(--text-muted); font-family:var(--font-mono); margin-top:1px;}
+  .dr-chevron{width:16px;height:16px; color:var(--text-faint); flex-shrink:0;}
+  .day-roster-divider{
+    margin:14px 0 4px;
+    font-size:10px; text-transform:uppercase; letter-spacing:0.5px;
+    color:var(--text-faint);
+    font-family:var(--font-mono);
+  }
+  table.escala-table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:560px;
+  }
+  table.escala-table thead th{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    font-weight:500;
+    padding:8px 4px;
+    text-align:center;
+    border-bottom:1px solid var(--border-soft);
+    background:var(--panel-2);
+  }
+  .day-head{display:flex; flex-direction:column; align-items:center; gap:3px;}
+  .day-head .day-name-txt{color:var(--text-muted); font-size:11px;}
+  .day-head .date-sm{opacity:0.65; font-weight:400;}
+  .day-random-btn{
+    background:transparent; border:none; color:var(--text-faint);
+    cursor:pointer; padding:2px; display:flex; border-radius:5px;
+    transition:color 0.12s ease, background 0.12s ease;
+  }
+  .day-random-btn:hover{color:var(--accent); background:var(--accent-soft);}
+  .day-random-btn svg{width:13px;height:13px;}
+  table.escala-table thead th:first-child{
+    text-align:left;
+    padding-left:14px;
+    position:sticky;left:0;
+    background:var(--panel-2);
+    z-index:2;
+  }
+  table.escala-table tbody td{
+    padding:7px 5px;
+    text-align:center;
+    border-bottom:1px solid var(--border-soft);
+  }
+  table.escala-table tbody tr:last-child td{border-bottom:none;}
+  table.escala-table tbody td:first-child{
+    text-align:left;
+    padding-left:14px;
+    position:sticky;left:0;
+    background:var(--panel);
+    z-index:1;
+    white-space:nowrap;
+  }
+  .op-cell{display:flex; align-items:center; gap:8px;}
+  .op-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .op-name{font-size:12.5px; font-weight:500;}
+  .op-role{font-size:10px; color:var(--text-faint); font-family:var(--font-mono);}
+
+  .shift-cell{
+    width:44px;height:34px;
+    margin:0 auto;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--panel-3);
+    font-family:var(--font-mono);
+    font-size:11px;
+    font-weight:700;
+    color:var(--text-faint);
+    cursor:pointer;
+    transition:transform 0.12s ease, filter 0.12s ease;
+  }
+  .shift-cell:hover{filter:brightness(1.18); transform:translateY(-1px);}
+  .shift-cell:active{transform:translateY(0);}
+  .shift-cell.filled{border-color:transparent;}
+
+  .legend-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 10px;
+    margin-top:12px;
+  }
+  .legend-chip{
+    display:flex;align-items:center;gap:6px;
+    font-size:10.5px;color:var(--text-muted);
+    font-family:var(--font-mono);
+  }
+  .legend-sw{width:11px;height:11px;border-radius:4px; flex-shrink:0;}
+
+  /* ---------- BOTTOM SHEET ---------- */
+  .sheet-backdrop{
+    position:fixed; inset:0;
+    background:rgba(4,7,13,0.6);
+    backdrop-filter:blur(2px);
+    z-index:90;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.2s ease;
+  }
+  .sheet-backdrop.open{opacity:1; pointer-events:auto;}
+  .bottom-sheet{
+    position:fixed;
+    left:50%;
+    bottom:0;
+    transform:translate(-50%, 100%);
+    width:100%;
+    max-width:520px;
+    max-height:78vh;
+    overflow-y:auto;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-bottom:none;
+    border-radius:20px 20px 0 0;
+    padding:10px 20px 26px;
+    z-index:91;
+    transition:transform 0.28s cubic-bezier(.22,1,.36,1);
+  }
+  .bottom-sheet.open{transform:translate(-50%, 0);}
+  .sheet-handle{
+    width:36px;height:4px;border-radius:3px;
+    background:var(--border);
+    margin:6px auto 16px;
+    position:sticky; top:0;
+  }
+  .sheet-title{font-family:var(--font-display); font-size:15px; font-weight:600;}
+  .sheet-sub{font-size:12px; color:var(--text-muted); margin-top:2px; margin-bottom:16px; font-family:var(--font-mono);}
+  .turno-options{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .turno-btn{
+    border:1px solid var(--border);
+    background:var(--panel-3);
+    color:var(--text);
+    border-radius:10px;
+    padding:13px 10px;
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+    text-align:left;
+    transition:filter 0.12s ease;
+  }
+  .turno-btn small{display:block; font-family:var(--font-body); font-weight:400; font-size:10px; opacity:0.8; margin-top:3px;}
+  .turno-btn:hover:not(:disabled){filter:brightness(1.15);}
+  .turno-btn.is-selected{box-shadow:0 0 0 2px #fff inset;}
+  .turno-btn:disabled{cursor:not-allowed;}
+  .turno-clear{
+    grid-column:1 / -1;
+    background:transparent;
+    border:1px dashed var(--border);
+    color:var(--text-faint);
+    text-align:center;
+  }
+  .sheet-divider{grid-column:1/-1; height:1px; background:var(--border); margin:4px 0;}
+  .sheet-group-label{grid-column:1/-1; font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-faint); margin:2px 0 -2px;}
+
+  /* ---------- FORMS ---------- */
+  .field{margin-bottom:14px;}
+  .field label{
+    display:block;
+    font-size:11px;
+    color:var(--text-muted);
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  .field input, .field select{
+    width:100%;
+    background:var(--panel-3);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:11px 12px;
+    border-radius:9px;
+    font-size:13.5px;
+    font-family:var(--font-body);
+    outline:none;
+  }
+  .field input:focus, .field select:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+  .field input::placeholder{color:var(--text-faint);}
+  .btn-primary{
+    width:100%;
+    background:var(--accent);
+    color:#1A1200;
+    border:none;
+    padding:13px;
+    border-radius:9px;
+    font-family:var(--font-display);
+    font-size:13.5px;
+    font-weight:700;
+    letter-spacing:0.2px;
+    cursor:pointer;
+    transition:filter 0.12s ease, transform 0.12s ease;
+  }
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-primary:active{transform:scale(0.99);}
+  .btn-primary:focus-visible, .shift-cell:focus-visible, .tab-btn:focus-visible, .turno-btn:focus-visible, .toolbar-btn:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+
+  .color-picker{display:flex; flex-wrap:wrap; gap:8px;}
+  .color-swatch{
+    width:30px;height:30px;border-radius:9px;
+    border:2px solid transparent;
+    cursor:pointer;
+    transition:transform 0.12s ease;
+  }
+  .color-swatch.selected{border-color:var(--text); transform:scale(1.08);}
+
+  /* ---------- LISTS ---------- */
+  .list-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 4px;
+    border-bottom:1px solid var(--border-soft);
+  }
+  .list-item:last-child{border-bottom:none;}
+  .avatar{
+    width:36px;height:36px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:13px;
+    color:#0B111C;
+    flex-shrink:0;
+  }
+  .list-item__body{flex:1; min-width:0;}
+  .list-item__body .t{font-size:13.5px; font-weight:600;}
+  .list-item__body .s{font-size:11.5px; color:var(--text-muted); font-family:var(--font-mono); margin-top:1px;}
+  .icon-btn{
+    width:32px;height:32px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:8px;
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--text-faint);
+    cursor:pointer;
+    flex-shrink:0;
+    transition:all 0.12s ease;
+  }
+  .icon-btn:hover{color:var(--red); border-color:var(--red);}
+  .status-select{
+    border:none;
+    border-radius:20px;
+    padding:6px 24px 6px 10px;
+    font-family:var(--font-mono);
+    font-size:10px;
+    font-weight:700;
+    cursor:pointer;
+    outline:none;
+    flex-shrink:0;
+    -webkit-appearance:auto;
+    appearance:auto;
+  }
+  .status-select:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  .data-actions{display:flex; flex-direction:column; gap:10px;}
+  .data-actions .toolbar-btn{width:100%;}
+  .btn-danger{background:rgba(240,101,74,0.14); border-color:rgba(240,101,74,0.4); color:var(--red);}
+  .btn-danger:hover{filter:brightness(1.25);}
+
+  .empty-state{
+    text-align:center;
+    padding:30px 10px;
+    color:var(--text-faint);
+    font-size:12.5px;
+  }
+
+  /* ---------- GRÁFICO ---------- */
+  .stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px;}
+  .stat-box{
+    background:var(--panel);
+    border:1px solid var(--border-soft);
+    border-radius:12px;
+    padding:14px 10px;
+    text-align:center;
+  }
+  .stat-box .v{font-family:var(--font-mono); font-size:20px; font-weight:600; color:var(--accent);}
+  .stat-box .k{font-size:9.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.4px; margin-top:4px;}
+
+  .donut-wrap{display:flex; align-items:center; gap:22px;}
+  .donut{
+    width:130px;height:130px;border-radius:50%;
+    flex-shrink:0;
+    position:relative;
+  }
+  .donut::after{
+    content:'';
+    position:absolute; inset:20px;
+    border-radius:50%;
+    background:var(--panel);
+  }
+  .donut-center{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    z-index:2;
+  }
+  .donut-center .v{font-family:var(--font-mono); font-size:22px; font-weight:700;}
+  .donut-center .k{font-size:9px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.4px;}
+  .donut-legend{flex:1; display:flex; flex-direction:column; gap:9px;}
+  .donut-legend-item{display:flex; align-items:center; gap:8px; font-size:11.5px;}
+  .donut-legend-item .d{width:9px;height:9px;border-radius:3px; flex-shrink:0;}
+  .donut-legend-item .name{flex:1; color:var(--text);}
+  .donut-legend-item .pct{font-family:var(--font-mono); color:var(--text-faint); font-size:11px;}
+
+  .bars{display:flex; align-items:flex-end; gap:8px; height:150px; padding-top:10px;}
+  .bar-col{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;}
+  .bar-track{width:100%; max-width:30px; flex:1; display:flex; align-items:flex-end; border-radius:6px; overflow:hidden; background:var(--panel-3);}
+  .bar-fill{width:100%; border-radius:6px 6px 0 0; background:linear-gradient(180deg, var(--accent), var(--accent-dark)); transition:height 0.4s ease;}
+  .bar-val{font-family:var(--font-mono); font-size:10px; color:var(--text-muted); margin:6px 0 3px;}
+  .bar-lbl{font-size:10px; color:var(--text-faint); text-transform:uppercase;}
+
+  .insight-box{
+    margin-top:16px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:var(--accent-soft);
+    border:1px solid rgba(242,169,59,0.3);
+    font-size:12px;
+    color:var(--text);
+    line-height:1.5;
+  }
+  .insight-box b{color:var(--accent);}
+
+  /* ---------- BOTTOM TABS ---------- */
+  .tab-bar{
+    position:fixed;
+    left:50%;
+    bottom:0;
+    transform:translateX(-50%);
+    width:100%;
+    max-width:520px;
+    display:flex;
+    background:rgba(19,26,41,0.92);
+    backdrop-filter:blur(14px);
+    border-top:1px solid var(--border);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+    z-index:50;
+  }
+  .tab-btn{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    background:transparent;
+    border:none;
+    color:var(--text-faint);
+    padding:7px 2px 6px;
+    cursor:pointer;
+    font-family:var(--font-body);
+    font-size:10.5px;
+    font-weight:600;
+    letter-spacing:0.1px;
+    border-radius:10px;
+    transition:color 0.15s ease;
+  }
+  .tab-btn svg{width:21px;height:21px; transition:transform 0.15s ease;}
+  .tab-btn.active{color:var(--accent);}
+  .tab-btn.active svg{transform:translateY(-1px);}
+  .tab-btn .tab-dot{
+    width:4px;height:4px;border-radius:50%;
+    background:var(--accent);
+    opacity:0;
+    transition:opacity 0.15s ease;
+  }
+  .tab-btn.active .tab-dot{opacity:1;}
+
+  .toast{
+    position:fixed; left:50%; bottom:88px; transform:translate(-50%, 12px);
+    max-width:460px; width:calc(100% - 40px);
+    background:var(--panel-3); border:1px solid var(--border);
+    color:var(--text); font-size:12.5px;
+    padding:12px 16px; border-radius:10px;
+    z-index:120; opacity:0; pointer-events:none;
+    transition:opacity 0.2s ease, transform 0.2s ease;
+    text-align:center;
+  }
+  .toast.show{opacity:1; transform:translate(-50%, 0);}
+
+  ::-webkit-scrollbar{height:6px; width:6px;}
+  ::-webkit-scrollbar-thumb{background:var(--border); border-radius:3px;}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="app-header__top">
+      <div class="app-mark">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" stroke="#1A1200" stroke-width="1.8"/><line x1="3" y1="9" x2="21" y2="9" stroke="#1A1200" stroke-width="1.8"/><line x1="8" y1="4" x2="8" y2="2" stroke="#1A1200" stroke-width="1.8" stroke-linecap="round"/><line x1="16" y1="4" x2="16" y2="2" stroke="#1A1200" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="13" r="1.3" fill="#1A1200"/><circle cx="12" cy="13" r="1.3" fill="#1A1200"/><circle cx="16" cy="13" r="1.3" fill="#1A1200"/><circle cx="8" cy="17" r="1.3" fill="#1A1200"/></svg>
+      </div>
+      <div class="app-titles">
+        <h1>Escala de Operadores</h1>
+        <p id="header-week-label">SEMANA ATUAL</p>
+      </div>
+      <div class="header-stat">
+        <div class="n" id="header-total-op">0</div>
+        <div class="l">operadores</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="app-main">
+
+    <!-- ESCALA -->
+    <section class="screen active" data-screen="escala">
+      <div class="week-nav">
+        <div>
+          <div class="rng" id="week-range">—</div>
+          <div class="sub">Modelo de escala semanal</div>
+        </div>
+        <div class="badge-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          T3 · Madrugada
+        </div>
+      </div>
+
+      <div class="day-picker-row">
+        <select id="select-day-random" class="day-picker-select" aria-label="Escolher dia para sortear"></select>
+        <button class="toolbar-btn" id="btn-random-day">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>
+          Sortear este dia
+        </button>
+      </div>
+
+      <div class="escala-toolbar">
+        <button class="toolbar-btn" id="btn-random-week">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>
+          Sortear semana
+        </button>
+        <button class="toolbar-btn toolbar-btn--accent" id="btn-share">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><line x1="8.3" y1="10.7" x2="15.7" y2="6.3"/><line x1="8.3" y1="13.3" x2="15.7" y2="17.7"/></svg>
+          Compartilhar imagem
+        </button>
+      </div>
+      <div class="toolbar-hint">Toque em um operador para editar manualmente · o dado sorteia só o dia escolhido</div>
+
+      <div class="share-card" id="share-target">
+        <div class="share-header">
+          <div>
+            <div class="share-title">Escala de Operadores</div>
+            <div class="share-sub" id="share-week-range">—</div>
+          </div>
+          <div class="share-mark"></div>
+        </div>
+
+        <div class="day-roster-header">
+          <div class="day-roster-title" id="day-roster-title">—</div>
+          <div class="day-roster-date" id="day-roster-date">—</div>
+        </div>
+
+        <div class="day-roster-list" id="day-roster-list"></div>
+
+        <div class="legend-row" id="turno-legend"></div>
+      </div>
+    </section>
+
+    <!-- ADICIONAR OPERADORES -->
+    <section class="screen" data-screen="operadores">
+      <div class="section-label"><h2>Novo operador</h2></div>
+      <div class="card">
+        <div class="field">
+          <label for="op-nome">Nome completo</label>
+          <input id="op-nome" type="text" placeholder="Ex: Juliana Prado" maxlength="60">
+        </div>
+        <div class="field">
+          <label for="op-funcao">Função</label>
+          <select id="op-funcao"></select>
+        </div>
+        <div class="field">
+          <label for="op-telefone">Telefone (opcional)</label>
+          <input id="op-telefone" type="text" placeholder="(00) 00000-0000" maxlength="20">
+        </div>
+        <button class="btn-primary" id="btn-add-operador">Adicionar operador</button>
+      </div>
+
+      <div class="section-label"><h2>Equipe</h2><span id="op-count-label">0 cadastrados</span></div>
+      <div class="card" id="operadores-list"></div>
+    </section>
+
+    <!-- FUNÇÕES -->
+    <section class="screen" data-screen="funcoes">
+      <div class="section-label"><h2>Nova função</h2></div>
+      <div class="card">
+        <div class="field">
+          <label for="fn-nome">Nome da função</label>
+          <input id="fn-nome" type="text" placeholder="Ex: Empacotamento" maxlength="40">
+        </div>
+        <div class="field">
+          <label>Cor de identificação</label>
+          <div class="color-picker" id="fn-color-picker"></div>
+        </div>
+        <button class="btn-primary" id="btn-add-funcao">Adicionar função</button>
+      </div>
+
+      <div class="section-label"><h2>Funções cadastradas</h2><span id="fn-count-label">0 funções</span></div>
+      <div class="card" id="funcoes-list"></div>
+    </section>
+
+    <!-- GRÁFICO -->
+    <section class="screen" data-screen="grafico">
+      <div class="stat-row">
+        <div class="stat-box"><div class="v" id="stat-operadores">0</div><div class="k">Operadores</div></div>
+        <div class="stat-box"><div class="v" id="stat-funcoes">0</div><div class="k">Funções</div></div>
+        <div class="stat-box"><div class="v" id="stat-cobertura">0%</div><div class="k">Cobertura</div></div>
+      </div>
+
+      <div class="section-label"><h2>Operadores por função</h2></div>
+      <div class="card">
+        <div class="donut-wrap">
+          <div class="donut" id="donut-chart">
+            <div class="donut-center"><div class="v" id="donut-total">0</div><div class="k">total</div></div>
+          </div>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </div>
+
+      <div class="section-label"><h2>Cobertura por dia (T3)</h2><span>trabalhando</span></div>
+      <div class="card">
+        <div class="bars" id="coverage-bars"></div>
+      </div>
+
+      <div class="insight-box" id="insight-box"></div>
+
+      <div class="section-label"><h2>Gerenciar dados</h2><span>ação não pode ser desfeita</span></div>
+      <div class="card">
+        <div class="data-actions">
+          <button class="toolbar-btn" id="btn-clear-escala">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l5 5v13H6z"/><path d="M14 3v5h5"/><line x1="9" y1="12" x2="15" y2="18"/><line x1="15" y1="12" x2="9" y2="18"/></svg>
+            Limpar escala da semana
+          </button>
+          <button class="toolbar-btn btn-danger" id="btn-clear-all">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            Excluir todos os dados
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM SHEET -->
+  <div class="sheet-backdrop" id="sheet-backdrop"></div>
+  <div class="bottom-sheet" id="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="sheet-title">Operador — Dia</div>
+    <div class="sheet-sub">Turno fixo T3 · Madrugada — escolha a função ou marque o status</div>
+    <div class="turno-options" id="turno-options"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- BOTTOM TABS -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-tab="escala">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="13" x2="8" y2="13.01"/><line x1="12" y1="13" x2="12" y2="13.01"/><line x1="16" y1="13" x2="16" y2="13.01"/><line x1="8" y1="17" x2="8" y2="17.01"/></svg>
+      <span>Escala</span>
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab-btn" data-tab="operadores">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><line x1="18" y1="7" x2="18" y2="13"/><line x1="15" y1="10" x2="21" y2="10"/></svg>
+      <span>Operadores</span>
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab-btn" data-tab="funcoes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 12.5 12.5 20a1.8 1.8 0 0 1-2.5 0l-6-6a1.8 1.8 0 0 1 0-2.5L11.5 4H19a1 1 0 0 1 1 1z"/><circle cx="15.2" cy="8.8" r="1.2" fill="currentColor" stroke="none"/></svg>
+      <span>Funções</span>
+      <span class="tab-dot"></span>
+    </button>
+    <button class="tab-btn" data-tab="grafico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="5" y1="20" x2="5" y2="11"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="19" y1="20" x2="19" y2="14"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+      <span>Gráfico</span>
+      <span class="tab-dot"></span>
+    </button>
+  </nav>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- ESTADO ---------- */
+  const DIAS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+  const DIAS_FULL = ['Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado','Domingo'];
+  const STATUS = {
+    folga:   {label:'Folga',   abbr:'F',  color:'#3A4460', text:'#EAEEF6'},
+    ferias:  {label:'Férias',  abbr:'FÉ', color:'#48D6A8', text:'#0B111C'},
+    ausente: {label:'Ausente', abbr:'AU', color:'#F0654A', text:'#FFFFFF'}
+  };
+  const SEM_FUNCAO_COLOR = '#2A3548';
+  const COLOR_PALETTE = ['#F2A93B','#5B9DF2','#48D6A8','#B084F2','#F0654A','#3BC9C9','#F27FB0','#8A96AC'];
+  const STATUS_OP = {
+    ativo:      {label:'Ativo',      color:'#48D6A8', text:'#0B111C'},
+    disponivel: {label:'Disponível', color:'#F2A93B', text:'#0B111C'},
+    ps:         {label:'P.S.',       color:'#3BC9C9', text:'#0B111C'},
+    folga:      {label:'Folga',      color:'#3A4460', text:'#EAEEF6'},
+    ferias:     {label:'Férias',     color:'#5B9DF2', text:'#FFFFFF'},
+    atestado:   {label:'Atestado',   color:'#B084F2', text:'#0B111C'},
+    ausente:    {label:'Ausente',    color:'#F0654A', text:'#FFFFFF'}
+  };
+  const STATUS_OP_DISPONIVEIS = ['ativo', 'disponivel'];
+  function operadorDisponivel(op){
+    return STATUS_OP_DISPONIVEIS.includes(op.statusOperador || 'ativo');
+  }
+
+  let funcoes = [
+    {id:'f1', nome:'Produção', cor:'#F2A93B'},
+    {id:'f2', nome:'Supervisão', cor:'#5B9DF2'},
+    {id:'f3', nome:'Manutenção', cor:'#48D6A8'},
+    {id:'f4', nome:'Qualidade', cor:'#B084F2'},
+    {id:'f5', nome:'Segurança', cor:'#F0654A'}
+  ];
+
+  let operadores = [
+    {id:'o1', nome:'Carlos Mendes', funcaoId:'f1', telefone:'(11) 98888-1234', statusOperador:'ativo'},
+    {id:'o2', nome:'Ana Ferreira', funcaoId:'f2', telefone:'(11) 98777-5678', statusOperador:'ativo'},
+    {id:'o3', nome:'Bruno Santos', funcaoId:'f3', telefone:'', statusOperador:'ativo'},
+    {id:'o4', nome:'Débora Lima', funcaoId:'f4', telefone:'', statusOperador:'ativo'},
+    {id:'o5', nome:'Eduardo Alves', funcaoId:'f1', telefone:'', statusOperador:'ativo'},
+    {id:'o6', nome:'Fernanda Costa', funcaoId:'f5', telefone:'', statusOperador:'ativo'}
+  ];
+
+  // chave: operadorId|diaIndex -> {status:'trabalho', funcaoId} | {status:'folga'|'ferias'|'ausente'}
+  let escala = {
+    'o1|0':{status:'trabalho',funcaoId:'f1'}, 'o2|0':{status:'trabalho',funcaoId:'f2'}, 'o3|0':{status:'trabalho',funcaoId:'f3'}, 'o4|0':{status:'trabalho',funcaoId:'f4'}, 'o5|0':{status:'trabalho',funcaoId:'f5'}, 'o6|0':{status:'folga'},
+    'o1|1':{status:'trabalho',funcaoId:'f2'}, 'o2|1':{status:'trabalho',funcaoId:'f1'}, 'o3|1':{status:'ferias'},                 'o4|1':{status:'trabalho',funcaoId:'f3'}, 'o5|1':{status:'trabalho',funcaoId:'f4'}, 'o6|1':{status:'trabalho',funcaoId:'f5'},
+    'o1|2':{status:'trabalho',funcaoId:'f3'}, 'o2|2':{status:'trabalho',funcaoId:'f4'}, 'o3|2':{status:'trabalho',funcaoId:'f1'}, 'o4|2':{status:'trabalho',funcaoId:'f5'}, 'o5|2':{status:'ausente'},                 'o6|2':{status:'trabalho',funcaoId:'f2'},
+    'o1|3':{status:'trabalho',funcaoId:'f4'}, 'o2|3':{status:'folga'},                 'o3|3':{status:'trabalho',funcaoId:'f2'}, 'o4|3':{status:'trabalho',funcaoId:'f1'}, 'o5|3':{status:'trabalho',funcaoId:'f3'}, 'o6|3':{status:'trabalho',funcaoId:'f5'},
+    'o1|4':{status:'trabalho',funcaoId:'f5'}, 'o2|4':{status:'trabalho',funcaoId:'f1'}, 'o3|4':{status:'trabalho',funcaoId:'f4'}, 'o4|4':{status:'trabalho',funcaoId:'f2'}, 'o5|4':{status:'trabalho',funcaoId:'f3'}, 'o6|4':{status:'trabalho',funcaoId:null},
+    'o1|5':{status:'trabalho',funcaoId:'f1'}, 'o2|5':{status:'trabalho',funcaoId:'f3'}, 'o3|5':{status:'trabalho',funcaoId:'f5'}, 'o4|5':{status:'ferias'},                 'o5|5':{status:'trabalho',funcaoId:'f2'}, 'o6|5':{status:'trabalho',funcaoId:'f4'},
+    'o1|6':{status:'folga'},                 'o2|6':{status:'folga'},                 'o3|6':{status:'trabalho',funcaoId:'f2'}, 'o4|6':{status:'trabalho',funcaoId:'f4'}, 'o5|6':{status:'trabalho',funcaoId:'f1'}, 'o6|6':{status:'trabalho',funcaoId:'f3'}
+  };
+
+  let uidCounter = 100;
+  function uid(prefix){ uidCounter++; return prefix + uidCounter + Math.floor(Math.random()*90+10); }
+  function escapeHtml(str){
+    const d = document.createElement('div');
+    d.textContent = str == null ? '' : String(str);
+    return d.innerHTML;
+  }
+  function funcaoById(id){ return funcoes.find(f => f.id === id); }
+  function abbrFor(nome){ return nome.trim().slice(0,2).toUpperCase(); }
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(showToast._tm);
+    showToast._tm = setTimeout(()=> t.classList.remove('show'), 2600);
+  }
+
+  /* ---------- DATAS DA SEMANA ---------- */
+  function getWeekDates(){
+    const today = new Date();
+    const dow = (today.getDay() + 6) % 7; // 0 = segunda
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - dow);
+    const dates = [];
+    for(let i=0;i<7;i++){
+      const d = new Date(monday);
+      d.setDate(monday.getDate()+i);
+      dates.push(d);
+    }
+    return dates;
+  }
+  function fmtDate(d){
+    return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+  }
+  const weekDates = getWeekDates();
+  let selectedDayIdx = (new Date().getDay() + 6) % 7; // hoje, 0 = segunda
+
+  /* ---------- ABAS ---------- */
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const screens = document.querySelectorAll('.screen');
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+  });
+  function switchTab(name){
+    tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    screens.forEach(s => s.classList.toggle('active', s.dataset.screen === name));
+    if(name === 'grafico') renderGrafico();
+  }
+
+  /* ---------- RENDER: ESCALA ---------- */
+  function cellVisual(entry){
+    if(!entry) return {label:'·', bg:'var(--panel-3)', color:'var(--text-faint)', title:'Não definido'};
+    if(entry.status === 'trabalho'){
+      const fn = funcaoById(entry.funcaoId);
+      if(fn) return {label:abbrFor(fn.nome), bg:fn.cor, color:'#0B111C', title:'T3 · ' + fn.nome};
+      return {label:'T3', bg:SEM_FUNCAO_COLOR, color:'var(--text-muted)', title:'T3 · Sem função definida'};
+    }
+    const s = STATUS[entry.status];
+    return {label:s.abbr, bg:s.color, color:s.text, title:s.label};
+  }
+
+  function renderEscala(){
+    const rangeTxt = fmtDate(weekDates[0]) + ' — ' + fmtDate(weekDates[6]);
+    document.getElementById('week-range').textContent = rangeTxt;
+    document.getElementById('header-week-label').textContent = 'SEMANA · ' + rangeTxt;
+    document.getElementById('header-total-op').textContent = operadores.length;
+
+    const diaNome = DIAS_FULL[selectedDayIdx];
+    const diaData = fmtDate(weekDates[selectedDayIdx]);
+    document.getElementById('day-roster-title').textContent = diaNome;
+    document.getElementById('day-roster-date').textContent = diaData;
+    document.getElementById('share-week-range').textContent = diaNome + ' · ' + diaData + ' · Turno T3 (Madrugada)';
+
+    const availableOps = operadores.filter(op => operadorDisponivel(op));
+    const unavailableOps = operadores.filter(op => !operadorDisponivel(op));
+
+    const list = document.getElementById('day-roster-list');
+    let html = '';
+
+    if(operadores.length === 0){
+      html = `<div class="empty-state">Nenhum operador cadastrado ainda.<br>Adicione operadores na aba "Operadores".</div>`;
+    } else if(availableOps.length === 0){
+      html = `<div class="empty-state">Todos os operadores estão indisponíveis (folga, férias, atestado, P.S. ou ausência).</div>`;
+    } else {
+      html = availableOps.map(op => {
+        const key = op.id + '|' + selectedDayIdx;
+        const entry = escala[key];
+        const v = cellVisual(entry);
+        return `<button class="day-roster-item" data-op="${op.id}" data-day="${selectedDayIdx}">
+          <span class="dr-avatar" style="background:${v.bg};color:${v.color}">${v.label}</span>
+          <span class="dr-body">
+            <span class="dr-name">${escapeHtml(op.nome)}</span>
+            <span class="dr-sub">${escapeHtml(v.title)}</span>
+          </span>
+          <svg class="dr-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>`;
+      }).join('');
+    }
+
+    if(unavailableOps.length > 0){
+      html += `<div class="day-roster-divider">Indisponíveis (status atual · não entram na escala)</div>` +
+        unavailableOps.map(op => {
+          const info = STATUS_OP[op.statusOperador || 'ativo'];
+          return `<div class="day-roster-item is-disabled" title="Mude o status na aba Operadores para reincluir">
+            <span class="dr-avatar" style="background:${info.color};color:${info.text}">${info.label.slice(0,2).toUpperCase()}</span>
+            <span class="dr-body">
+              <span class="dr-name">${escapeHtml(op.nome)}</span>
+              <span class="dr-sub">${info.label}</span>
+            </span>
+          </div>`;
+        }).join('');
+    }
+
+    list.innerHTML = html;
+
+    const legendParts = funcoes.map(f =>
+      `<div class="legend-chip"><span class="legend-sw" style="background:${f.cor}"></span>${escapeHtml(f.nome)}</div>`
+    );
+    Object.values(STATUS).forEach(s => {
+      legendParts.push(`<div class="legend-chip"><span class="legend-sw" style="background:${s.color}"></span>${s.label}</div>`);
+    });
+    legendParts.push(`<div class="legend-chip"><span class="legend-sw" style="background:${SEM_FUNCAO_COLOR}"></span>T3 sem função</div>`);
+    document.getElementById('turno-legend').innerHTML = legendParts.join('');
+
+    document.querySelectorAll('.day-roster-item[data-op]').forEach(btn => {
+      btn.addEventListener('click', () => openSheet(btn.dataset.op, parseInt(btn.dataset.day,10)));
+    });
+  }
+
+  /* ---------- SORTEIO ---------- */
+  function randomizeDay(dayIdx, notify){
+    if(operadores.length === 0){ showToast('Cadastre operadores primeiro.'); return; }
+    if(funcoes.length === 0){ showToast('Cadastre funções primeiro.'); return; }
+
+    const elegiveis = operadores.filter(op => operadorDisponivel(op));
+    if(elegiveis.length === 0){ showToast('Nenhum operador disponível (todos estão folga/férias/atestado/P.S./ausente).'); return; }
+
+    const locked = new Set(
+      elegiveis.filter(op => {
+        const e = escala[op.id + '|' + dayIdx];
+        return e && e.status !== 'trabalho';
+      }).map(op => op.id)
+    );
+    const workingOps = shuffle(elegiveis.filter(op => !locked.has(op.id)));
+    const shuffledFuncoes = shuffle(funcoes);
+
+    workingOps.forEach((op, idx) => {
+      const key = op.id + '|' + dayIdx;
+      escala[key] = {
+        status:'trabalho',
+        funcaoId: idx < shuffledFuncoes.length ? shuffledFuncoes[idx].id : null
+      };
+    });
+
+    renderEscala();
+    if(notify) showToast('Escala de ' + DIAS[dayIdx] + ' sorteada — sem função repetida no dia.');
+  }
+
+  function randomizeWeek(){
+    if(operadores.length === 0){ showToast('Cadastre operadores primeiro.'); return; }
+    if(funcoes.length === 0){ showToast('Cadastre funções primeiro.'); return; }
+    for(let d=0; d<7; d++) randomizeDay(d, false);
+    showToast('Semana sorteada — cada dia sem nomes ou funções repetidas.');
+  }
+  document.getElementById('btn-random-week').addEventListener('click', randomizeWeek);
+
+  /* ---------- SELECIONAR / SORTEAR UM DIA (seletor de dia/data) ---------- */
+  function populateDaySelect(){
+    const sel = document.getElementById('select-day-random');
+    sel.innerHTML = DIAS.map((d,i) => `<option value="${i}">${d} · ${fmtDate(weekDates[i])}</option>`).join('');
+    sel.value = String(selectedDayIdx);
+    sel.addEventListener('change', () => {
+      selectedDayIdx = parseInt(sel.value, 10);
+      renderEscala();
+    });
+  }
+  document.getElementById('btn-random-day').addEventListener('click', () => {
+    randomizeDay(selectedDayIdx, true);
+  });
+
+  /* ---------- COMPARTILHAR IMAGEM ---------- */
+  const btnShare = document.getElementById('btn-share');
+  const btnShareOriginalHTML = btnShare.innerHTML;
+  btnShare.addEventListener('click', async () => {
+    if(typeof html2canvas === 'undefined'){
+      showToast('Não foi possível carregar o gerador de imagem. Verifique sua conexão.');
+      return;
+    }
+    btnShare.disabled = true;
+    btnShare.textContent = 'Gerando imagem…';
+    try{
+      const target = document.getElementById('share-target');
+      const canvas = await html2canvas(target, {backgroundColor:'#0B111C', scale:2});
+      canvas.toBlob(async (blob) => {
+        if(!blob){
+          showToast('Falha ao gerar a imagem.');
+          btnShare.disabled = false; btnShare.innerHTML = btnShareOriginalHTML;
+          return;
+        }
+        const fileName = 'escala-operadores.png';
+        let shared = false;
+        try{
+          const file = new File([blob], fileName, {type:'image/png'});
+          if(navigator.canShare && navigator.canShare({files:[file]})){
+            await navigator.share({files:[file], title:'Escala de Operadores', text:'Escala da semana — turno T3'});
+            shared = true;
+          }
+        }catch(err){ /* usuário cancelou ou share indisponível — cai no download */ }
+
+        if(!shared){
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = fileName;
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast('Imagem da escala baixada.');
+        }
+        btnShare.disabled = false; btnShare.innerHTML = btnShareOriginalHTML;
+      }, 'image/png');
+    }catch(err){
+      console.error(err);
+      showToast('Não foi possível gerar a imagem. Tente novamente.');
+      btnShare.disabled = false; btnShare.innerHTML = btnShareOriginalHTML;
+    }
+  });
+
+  /* ---------- BOTTOM SHEET (seleção manual) ---------- */
+  const sheet = document.getElementById('bottom-sheet');
+  const sheetBackdrop = document.getElementById('sheet-backdrop');
+  let sheetCtx = null;
+
+  function openSheet(opId, dayIdx){
+    sheetCtx = {opId, dayIdx};
+    const op = operadores.find(o => o.id === opId);
+    if(!op) return;
+    const key = opId + '|' + dayIdx;
+    const current = escala[key];
+
+    document.getElementById('sheet-title').textContent = `${op.nome} — ${DIAS[dayIdx]} (${fmtDate(weekDates[dayIdx])})`;
+
+    const opts = document.getElementById('turno-options');
+    let html = '<div class="sheet-group-label">Trabalhar no T3 como…</div>';
+
+    if(funcoes.length === 0){
+      html += `<div class="empty-state" style="grid-column:1/-1;padding:6px 0;">Cadastre funções na aba "Funções" para atribuir trabalho.</div>`;
+    } else {
+      html += funcoes.map(f => {
+        const other = operadores.find(o => o.id !== opId && escala[o.id+'|'+dayIdx] && escala[o.id+'|'+dayIdx].status === 'trabalho' && escala[o.id+'|'+dayIdx].funcaoId === f.id);
+        const isSelected = current && current.status === 'trabalho' && current.funcaoId === f.id;
+        const disabled = !!other && !isSelected;
+        return `<button class="turno-btn ${isSelected ? 'is-selected' : ''}" style="background:${f.cor};color:#0B111C;${disabled?'opacity:.4;':''}" data-funcao="${f.id}" ${disabled?'disabled':''}>${escapeHtml(f.nome)}<small>${disabled ? 'Em uso: ' + escapeHtml(other.nome) : 'T3 · Madrugada'}</small></button>`;
+      }).join('');
+    }
+
+    html += '<div class="sheet-divider"></div><div class="sheet-group-label">Status do dia</div>';
+    html += Object.entries(STATUS).map(([code,info]) => {
+      const isSelected = current && current.status === code;
+      return `<button class="turno-btn ${isSelected ? 'is-selected' : ''}" style="background:${info.color};color:${info.text}" data-status="${code}">${info.label}</button>`;
+    }).join('');
+    html += `<button class="turno-btn turno-clear" data-clear="1">Limpar</button>`;
+
+    opts.innerHTML = html;
+
+    opts.querySelectorAll('[data-funcao]').forEach(b => {
+      b.addEventListener('click', () => {
+        escala[key] = {status:'trabalho', funcaoId:b.dataset.funcao};
+        closeSheet(); renderEscala();
+      });
+    });
+    opts.querySelectorAll('[data-status]').forEach(b => {
+      b.addEventListener('click', () => {
+        escala[key] = {status:b.dataset.status};
+        closeSheet(); renderEscala();
+      });
+    });
+    const clearBtn = opts.querySelector('[data-clear]');
+    if(clearBtn){
+      clearBtn.addEventListener('click', () => {
+        delete escala[key];
+        closeSheet(); renderEscala();
+      });
+    }
+
+    sheet.classList.add('open');
+    sheetBackdrop.classList.add('open');
+  }
+  function closeSheet(){
+    sheet.classList.remove('open');
+    sheetBackdrop.classList.remove('open');
+    sheetCtx = null;
+  }
+  sheetBackdrop.addEventListener('click', closeSheet);
+
+  /* ---------- RENDER: OPERADORES ---------- */
+  function refreshFuncaoSelect(){
+    const sel = document.getElementById('op-funcao');
+    if(funcoes.length === 0){
+      sel.innerHTML = '<option value="">Cadastre uma função primeiro</option>';
+      return;
+    }
+    sel.innerHTML = funcoes.map(f => `<option value="${f.id}">${escapeHtml(f.nome)}</option>`).join('');
+  }
+
+  function renderOperadores(){
+    refreshFuncaoSelect();
+    document.getElementById('op-count-label').textContent = operadores.length + (operadores.length===1 ? ' cadastrado' : ' cadastrados');
+    const list = document.getElementById('operadores-list');
+    if(operadores.length === 0){
+      list.innerHTML = `<div class="empty-state">Nenhum operador cadastrado.</div>`;
+      return;
+    }
+    list.innerHTML = operadores.map(op => {
+      const fn = funcaoById(op.funcaoId);
+      const cor = fn ? fn.cor : '#5C6884';
+      const iniciais = op.nome.trim().split(/\s+/).slice(0,2).map(p=>p[0]).join('').toUpperCase();
+      return `<div class="list-item">
+        <div class="avatar" style="background:${cor}">${iniciais}</div>
+        <div class="list-item__body">
+          <div class="t">${escapeHtml(op.nome)}</div>
+          <div class="s">${fn ? escapeHtml(fn.nome) : 'Sem função'}${op.telefone ? ' · ' + escapeHtml(op.telefone) : ''}</div>
+        </div>
+        <select class="status-select" data-status-op="${op.id}" style="background:${STATUS_OP[op.statusOperador || 'ativo'].color};color:${STATUS_OP[op.statusOperador || 'ativo'].text}" aria-label="Status de ${escapeHtml(op.nome)}">
+          ${Object.entries(STATUS_OP).map(([code,info]) => `<option value="${code}" ${(op.statusOperador||'ativo')===code ? 'selected':''}>${info.label}</option>`).join('')}
+        </select>
+        <button class="icon-btn" data-remove-op="${op.id}" aria-label="Remover operador">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+        </button>
+      </div>`;
+    }).join('');
+    list.querySelectorAll('[data-remove-op]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.removeOp;
+        operadores = operadores.filter(o => o.id !== id);
+        Object.keys(escala).forEach(k => { if(k.startsWith(id + '|')) delete escala[k]; });
+        renderAll();
+      });
+    });
+    list.querySelectorAll('[data-status-op]').forEach(sel => {
+      sel.addEventListener('change', () => {
+        const id = sel.dataset.statusOp;
+        const op = operadores.find(o => o.id === id);
+        if(op){
+          op.statusOperador = sel.value;
+          showToast(`${op.nome}: status alterado para ${STATUS_OP[sel.value].label}.`);
+        }
+        renderOperadores();
+        renderEscala();
+      });
+    });
+  }
+
+  document.getElementById('btn-add-operador').addEventListener('click', () => {
+    const nomeInput = document.getElementById('op-nome');
+    const telInput = document.getElementById('op-telefone');
+    const funcaoSel = document.getElementById('op-funcao');
+    const nome = nomeInput.value.trim();
+    if(!nome){ nomeInput.focus(); return; }
+    if(funcoes.length === 0){ switchTab('funcoes'); return; }
+    operadores.push({
+      id: uid('o'),
+      nome,
+      funcaoId: funcaoSel.value || null,
+      telefone: telInput.value.trim(),
+      statusOperador: 'ativo'
+    });
+    nomeInput.value = '';
+    telInput.value = '';
+    renderAll();
+  });
+
+  /* ---------- RENDER: FUNÇÕES ---------- */
+  let selectedColor = COLOR_PALETTE[0];
+  function renderColorPicker(){
+    const wrap = document.getElementById('fn-color-picker');
+    wrap.innerHTML = COLOR_PALETTE.map(c =>
+      `<div class="color-swatch ${c===selectedColor?'selected':''}" style="background:${c}" data-color="${c}"></div>`
+    ).join('');
+    wrap.querySelectorAll('.color-swatch').forEach(sw => {
+      sw.addEventListener('click', () => { selectedColor = sw.dataset.color; renderColorPicker(); });
+    });
+  }
+
+  function renderFuncoes(){
+    document.getElementById('fn-count-label').textContent = funcoes.length + (funcoes.length===1 ? ' função' : ' funções');
+    const list = document.getElementById('funcoes-list');
+    if(funcoes.length === 0){
+      list.innerHTML = `<div class="empty-state">Nenhuma função cadastrada.</div>`;
+      return;
+    }
+    list.innerHTML = funcoes.map(f => {
+      const count = operadores.filter(o => o.funcaoId === f.id).length;
+      return `<div class="list-item">
+        <div class="avatar" style="background:${f.cor}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B111C" stroke-width="2"><path d="M20 12.5 12.5 20a1.8 1.8 0 0 1-2.5 0l-6-6a1.8 1.8 0 0 1 0-2.5L11.5 4H19a1 1 0 0 1 1 1z"/></svg></div>
+        <div class="list-item__body">
+          <div class="t">${escapeHtml(f.nome)}</div>
+          <div class="s">${count} ${count===1 ? 'operador' : 'operadores'}</div>
+        </div>
+        <button class="icon-btn" data-remove-fn="${f.id}" aria-label="Remover função">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+        </button>
+      </div>`;
+    }).join('');
+    list.querySelectorAll('[data-remove-fn]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.removeFn;
+        funcoes = funcoes.filter(f => f.id !== id);
+        operadores.forEach(o => { if(o.funcaoId === id) o.funcaoId = null; });
+        Object.keys(escala).forEach(k => {
+          const e = escala[k];
+          if(e && e.status === 'trabalho' && e.funcaoId === id) e.funcaoId = null;
+        });
+        renderAll();
+      });
+    });
+  }
+
+  document.getElementById('btn-add-funcao').addEventListener('click', () => {
+    const nomeInput = document.getElementById('fn-nome');
+    const nome = nomeInput.value.trim();
+    if(!nome){ nomeInput.focus(); return; }
+    funcoes.push({ id: uid('f'), nome, cor: selectedColor });
+    nomeInput.value = '';
+    renderAll();
+  });
+
+  /* ---------- RENDER: GRÁFICO ---------- */
+  function renderGrafico(){
+    document.getElementById('stat-operadores').textContent = operadores.length;
+    document.getElementById('stat-funcoes').textContent = funcoes.length;
+
+    const totalCells = operadores.length * 7;
+    const filledCells = Object.values(escala).filter(e => e.status === 'trabalho').length;
+    const cobertura = totalCells ? Math.round((filledCells/totalCells)*100) : 0;
+    document.getElementById('stat-cobertura').textContent = cobertura + '%';
+
+    const total = operadores.length;
+    document.getElementById('donut-total').textContent = total;
+    const donut = document.getElementById('donut-chart');
+    const legend = document.getElementById('donut-legend');
+
+    const semFuncaoCount = operadores.filter(o => !funcaoById(o.funcaoId)).length;
+    const dist = funcoes.map(f => ({
+      nome: f.nome, cor: f.cor,
+      count: operadores.filter(o => o.funcaoId === f.id).length
+    })).filter(d => d.count > 0);
+    if(semFuncaoCount > 0) dist.push({nome:'Sem função', cor: SEM_FUNCAO_COLOR, count:semFuncaoCount});
+
+    if(total === 0){
+      donut.style.background = 'var(--panel-3)';
+      legend.innerHTML = `<div class="empty-state" style="padding:8px 0;">Sem dados ainda.</div>`;
+    } else {
+      let acc = 0;
+      const stops = dist.map(d => {
+        const start = (acc/total)*360;
+        acc += d.count;
+        const end = (acc/total)*360;
+        return `${d.cor} ${start}deg ${end}deg`;
+      }).join(', ');
+      donut.style.background = `conic-gradient(${stops})`;
+      legend.innerHTML = dist.map(d =>
+        `<div class="donut-legend-item">
+          <span class="d" style="background:${d.cor}"></span>
+          <span class="name">${escapeHtml(d.nome)}</span>
+          <span class="pct">${d.count} · ${Math.round((d.count/total)*100)}%</span>
+        </div>`
+      ).join('');
+    }
+
+    const barsWrap = document.getElementById('coverage-bars');
+    const perDay = DIAS.map((_, dayIdx) => {
+      return operadores.filter(op => {
+        const e = escala[op.id + '|' + dayIdx];
+        return e && e.status === 'trabalho';
+      }).length;
+    });
+    const maxVal = Math.max(1, operadores.length);
+    barsWrap.innerHTML = DIAS.map((d, i) => {
+      const h = Math.round((perDay[i]/maxVal)*100);
+      return `<div class="bar-col">
+        <div class="bar-val">${perDay[i]}</div>
+        <div class="bar-track"><div class="bar-fill" style="height:${h}%"></div></div>
+        <div class="bar-lbl">${d}</div>
+      </div>`;
+    }).join('');
+
+    const insight = document.getElementById('insight-box');
+    if(operadores.length === 0){
+      insight.innerHTML = 'Cadastre operadores e monte a escala para ver estatísticas de cobertura aqui.';
+    } else {
+      let minIdx = 0;
+      for(let i=1;i<7;i++) if(perDay[i] < perDay[minIdx]) minIdx = i;
+      let maxIdx = 0;
+      for(let i=1;i<7;i++) if(perDay[i] > perDay[maxIdx]) maxIdx = i;
+      insight.innerHTML = `Cobertura geral da semana no T3: <b>${cobertura}%</b> dos turnos preenchidos. ` +
+        `Menor cobertura em <b>${DIAS[minIdx]}</b> (${perDay[minIdx]} de ${operadores.length}) · ` +
+        `maior em <b>${DIAS[maxIdx]}</b> (${perDay[maxIdx]} de ${operadores.length}).`;
+    }
+  }
+
+  /* ---------- GERENCIAR DADOS ---------- */
+  document.getElementById('btn-clear-escala').addEventListener('click', () => {
+    if(Object.keys(escala).length === 0){ showToast('Não há escala para limpar.'); return; }
+    const ok = confirm('Limpar toda a escala da semana? Isso apaga as funções, folgas, férias, atestados e ausências marcados nos dias, mas mantém os operadores e as funções cadastradas.');
+    if(!ok) return;
+    escala = {};
+    renderAll();
+    showToast('Escala da semana limpa.');
+  });
+
+  document.getElementById('btn-clear-all').addEventListener('click', () => {
+    const ok = confirm('Excluir TODOS os dados do app (operadores, funções e escala)? Essa ação não pode ser desfeita.');
+    if(!ok) return;
+    operadores = [];
+    funcoes = [];
+    escala = {};
+    renderAll();
+    showToast('Todos os dados foram excluídos.');
+  });
+
+  /* ---------- RENDER GERAL ---------- */
+  function renderAll(){
+    renderEscala();
+    renderOperadores();
+    renderFuncoes();
+    if(document.querySelector('.tab-btn.active').dataset.tab === 'grafico') renderGrafico();
+  }
+
+  renderColorPicker();
+  populateDaySelect();
+  renderAll();
+})();
+</script>
+</body>
+</html>
